@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chasion.mapper.EmpMapper">
+
+<!--    List<Emp> getAllEmp();-->
+    <select id="getAllEmpOld" resultType="Emp">
+        select * from t_emp
+    </select>
+
+    <select id="getAllEmp" resultMap="empResult">
+        select * from t_emp
+    </select>
+
+    <resultMap id="empResult" type="Emp">
+        <id property="id" column="eid"></id>
+        <result property="empName" column="emp_name"></result>
+        <result property="age" column="age"></result>
+        <result property="sex" column="sex"></result>
+        <result property="email" column="email"></result>
+    </resultMap>
+
+<!--    处理多对一映射关系方式一：级联属性赋值-->
+<!--    <resultMap id="empAndDeptResult" type="Emp">-->
+<!--        <id property="id" column="eid"></id>-->
+<!--        <result property="empName" column="emp_name"></result>-->
+<!--        <result property="age" column="age"></result>-->
+<!--        <result property="sex" column="sex"></result>-->
+<!--        <result property="email" column="email"></result>-->
+<!--        <result property="dept.did" column="did"></result>-->
+<!--        <result property="dept.deptName" column="dept_name"></result>-->
+<!--    </resultMap>-->
+
+    <!--处理多对一映射关系方式二：association -->
+    <resultMap id="empAndDeptResult" type="Emp">
+        <id property="id" column="eid"></id>
+        <result property="empName" column="emp_name"></result>
+        <result property="age" column="age"></result>
+        <result property="sex" column="sex"></result>
+        <result property="email" column="email"></result>
+        <association property="dept" javaType="Dept">
+            <id property="did" column="did"></id>
+            <result property="deptName" column="dept_name"></result>
+        </association>
+    </resultMap>
+
+<!--    Emp getEmpAndDept(@Param("id") Integer id);-->
+    <select id="getEmpAndDept" resultMap="empAndDeptResult">
+        select * from t_emp left join t_dept on t_emp.did = t_dept.did where t_emp.eid = #{id}
+    </select>
+
+
+    <resultMap id="empAndDeptByStepResultMap" type="Emp">
+        <id property="id" column="eid"></id>
+        <result property="empName" column="emp_name"></result>
+        <result property="age" column="age"></result>
+        <result property="sex" column="sex"></result>
+        <result property="email" column="email"></result>
+        <association property="dept" select="com.chasion.mapper.DeptMapper.getEmpAndDeptByStepTwo" column="did" fetchType="eager"></association>
+    </resultMap>
+<!--    Emp getEmpAndDeptByStepOne(@Param("id") Integer id);-->
+    <select id="getEmpAndDeptByStepOne" resultMap="empAndDeptByStepResultMap">
+        select * from t_emp where eid = #{id}
+    </select>
+
+
+<!--    List<Emp> getDeptAndEmpByStepTwo(@Param("did") Integer did);-->
+    <select id="getDeptAndEmpByStepTwo" resultType="Emp">
+        select * from t_emp where did = #{did}
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+create table t_user(
+    id int comment '编号',
+    username varchar(20) comment '姓名',
+    password varchar(20) comment '密码',
+    age int comment '年龄',
+    sex varchar(1) comment '性别',
+    email varchar(20) comment '邮箱'
+
+);
+
+create table t_emp(
+    eid int AUTO_INCREMENT PRIMARY KEY,
+    emp_name varchar(20),
+    age int,
+    sex char,
+    email varchar(20)
+);
+/*添加字段*/
+alter table t_emp add did int;
+/*删除外键*/
+alter table t_emp drop foreign key fk_emp_did;
+/*添加外键约束*/
+alter table t_emp add constraint fk_emp_did foreign key (did) references t_dept(did) on update cascade on delete cascade;
+create table t_dept(
+    did int AUTO_INCREMENT PRIMARY KEY,
+    dept_name varchar(20)
+);
+
+insert into t_dept values(1, '研发部'),(2, '市场部'),(3,'财务部');
+insert into t_emp values(1, '张三', 23, '男', '123@qq.com', 2), (2, '李四', 25, '男', '123@qq.com', 1),(3, '小红', 18, '女', '123@qq.com', 3), (4, '小王', 28, '男', '123@qq.com', 3),(5, '小李', 22, '男', '123@qq.com', 2);
